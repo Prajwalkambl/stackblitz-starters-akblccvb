@@ -1,0 +1,512 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Internly — Find Your Internship</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --dark: #172033;
+      --muted: #687386;
+      --bg: #f6f7fb;
+      --border: #e7eaf1;
+      --green: #12805c;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--dark);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1160px, 92%); margin: auto; }
+
+    header {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 72px;
+      gap: 20px;
+    }
+    .logo { font-size: 25px; font-weight: 850; color: var(--primary); }
+    .navlinks { display: flex; gap: 24px; align-items: center; }
+    .navlinks a:hover { color: var(--primary); }
+    .btn {
+      border: 0;
+      background: var(--primary);
+      color: white;
+      border-radius: 10px;
+      padding: 12px 17px;
+      font-weight: 700;
+      display: inline-block;
+    }
+    .btn:hover { background: #3730a3; }
+    .btn-outline {
+      color: var(--primary);
+      background: white;
+      border: 1px solid #c7c5ff;
+    }
+    .btn-outline:hover { background: #f0efff; }
+
+    .hero {
+      padding: 68px 0 56px;
+      background: linear-gradient(120deg, #eeedff, #f8faff 65%, #e6f8f3);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 45px;
+      align-items: center;
+    }
+    .eyebrow {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(36px, 5vw, 58px);
+      line-height: 1.08;
+      letter-spacing: -2px;
+      margin: 15px 0;
+    }
+    .hero p { color: var(--muted); font-size: 17px; max-width: 540px; }
+    .hero-art {
+      background: white;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px #343b6312;
+    }
+    .art-icon { font-size: 54px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 24px; }
+    .stat { background: #f7f7ff; padding: 13px; border-radius: 12px; }
+    .stat strong { display: block; font-size: 22px; color: var(--primary); }
+    .stat span { color: var(--muted); font-size: 12px; }
+
+    section { padding: 48px 0; }
+    .section-head {
+      display: flex; justify-content: space-between; align-items: end;
+      gap: 16px; margin-bottom: 24px;
+    }
+    h2 { font-size: 30px; letter-spacing: -.7px; margin: 0 0 6px; }
+    .sub { color: var(--muted); margin: 0; }
+    .searchbar {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr auto;
+      gap: 12px;
+      background: white;
+      padding: 17px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid #dce1eb;
+      border-radius: 9px;
+      background: white;
+      color: var(--dark);
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px #4f46e51a;
+    }
+    .results-head {
+      display: flex; justify-content: space-between;
+      color: var(--muted); font-size: 14px; margin: 18px 0;
+    }
+    .jobs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 17px;
+    }
+    .job-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .job-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px #1f29370d;
+    }
+    .company-row { display: flex; align-items: center; gap: 12px; }
+    .company-logo {
+      width: 48px; height: 48px; border-radius: 13px;
+      display: grid; place-items: center; background: #efeeff;
+      font-size: 23px;
+    }
+    .company-row h3 { font-size: 17px; margin: 0; }
+    .company-row p { margin: 3px 0 0; font-size: 13px; color: var(--muted); }
+    .tag {
+      display: inline-block; background: #f0efff; color: #4f46e5;
+      border-radius: 7px; padding: 5px 9px; font-size: 12px;
+      margin: 16px 5px 0 0;
+    }
+    .job-title { font-size: 19px; margin: 17px 0 8px; }
+    .details { color: var(--muted); font-size: 13px; display: grid; gap: 7px; }
+    .job-bottom {
+      border-top: 1px solid var(--border);
+      margin-top: 18px; padding-top: 15px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .stipend { color: var(--green); font-weight: 800; font-size: 14px; }
+    .job-bottom button { padding: 9px 12px; }
+    .empty {
+      background: white; border: 1px dashed #cdd2df;
+      padding: 36px; text-align: center; border-radius: 14px;
+      color: var(--muted); grid-column: 1 / -1;
+    }
+
+    .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .how-card { background: white; border: 1px solid var(--border); padding: 24px; border-radius: 16px; }
+    .how-card .number { font-size: 28px; }
+    .how-card h3 { margin-bottom: 7px; }
+    .how-card p { color: var(--muted); margin-bottom: 0; }
+
+    .cta {
+      background: #22234f; color: white; border-radius: 22px;
+      padding: 36px; display: flex; justify-content: space-between;
+      align-items: center; gap: 20px;
+    }
+    .cta p { color: #d3d4ee; margin-bottom: 0; }
+
+    footer { background: white; border-top: 1px solid var(--border); padding: 26px 0; color: var(--muted); }
+    .footer-row { display: flex; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
+
+    dialog {
+      border: 0; border-radius: 18px; padding: 0;
+      width: min(520px, 94vw); max-height: 90vh;
+      box-shadow: 0 25px 100px #11182755;
+    }
+    dialog::backdrop { background: #10142699; }
+    .modal-inner { padding: 25px; }
+    .modal-head { display: flex; justify-content: space-between; gap: 15px; }
+    .close-btn { background: #f0f1f6; border: 0; border-radius: 8px; padding: 6px 11px; height: 36px; }
+    .form-fields { display: grid; gap: 14px; margin: 18px 0; }
+    .form-fields label { font-size: 13px; font-weight: 700; display: grid; gap: 6px; }
+    .notice { font-size: 13px; color: var(--muted); }
+    #formMessage { margin-top: 12px; font-size: 14px; }
+    .success { color: var(--green); }
+    .error { color: #b42318; }
+    .hidden { display: none !important; }
+
+    @media(max-width: 850px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-art { max-width: 520px; }
+      .jobs { grid-template-columns: repeat(2,1fr); }
+      .searchbar { grid-template-columns: repeat(2,1fr); }
+    }
+    @media(max-width: 560px) {
+      .navlinks { gap: 12px; font-size: 13px; }
+      .navlinks a:not(.btn) { display: none; }
+      .hero { padding: 48px 0 38px; }
+      .jobs, .how-grid, .searchbar { grid-template-columns: 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+      .cta { flex-direction: column; align-items: start; padding: 26px; }
+      h2 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <nav class="container">
+    <a class="logo" href="#home">internly<span style="color:#172033">.</span></a>
+    <div class="navlinks">
+      <a href="#internships">Internships</a>
+      <a href="#how">How it works</a>
+      <a href="#about">About</a>
+      <button class="btn" onclick="document.getElementById('internships').scrollIntoView({behavior:'smooth'})">Find an Internship</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Your career starts here</span>
+        <h1>Find the internship that moves you <span style="color:#4f46e5">forward.</span></h1>
+        <p>Explore opportunities, discover your strengths and take the first step towards a career you'll love.</p>
+        <button class="btn" onclick="document.getElementById('internships').scrollIntoView({behavior:'smooth'})">Explore internships →</button>
+        <button class="btn btn-outline" style="margin-left:8px" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How it works</button>
+      </div>
+      <div class="hero-art">
+        <div class="art-icon">🎯 💼</div>
+        <h2 style="margin-top:12px">Your next opportunity is waiting.</h2>
+        <p class="sub">Find roles that match your skills, interests and career goals.</p>
+        <div class="stat-grid">
+          <div class="stat"><strong id="statJobs">12</strong><span>Sample roles</span></div>
+          <div class="stat"><strong>6</strong><span>Career fields</span></div>
+          <div class="stat"><strong>100%</strong><span>Free to explore</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="internships">
+    <div class="container">
+      <div class="section-head">
+        <div><h2>Explore internships</h2><p class="sub">Find a role that fits your goals.</p></div>
+        <span class="tag">Demo opportunities</span>
+      </div>
+
+      <div class="searchbar">
+        <input id="search" type="search" placeholder="🔎 Search role or company..." aria-label="Search role or company">
+        <select id="category" aria-label="Filter by category">
+          <option value="">All categories</option>
+          <option>Technology</option><option>Design</option><option>Marketing</option>
+          <option>Finance</option><option>Content</option><option>Business</option>
+        </select>
+        <select id="mode" aria-label="Filter by work mode">
+          <option value="">All work modes</option>
+          <option>Remote</option><option>Hybrid</option><option>On-site</option>
+        </select>
+        <button class="btn" id="clearFilters">Reset filters</button>
+      </div>
+
+      <div class="results-head">
+        <span id="resultCount" aria-live="polite">Showing internships</span>
+        <span>Sorted by featured</span>
+      </div>
+      <div class="jobs" id="jobs"></div>
+    </div>
+  </section>
+
+  <section id="how" style="background:#eeeff8">
+    <div class="container">
+      <div class="section-head">
+        <div><h2>Three steps to get started</h2><p class="sub">Your journey can begin today.</p></div>
+      </div>
+      <div class="how-grid">
+        <div class="how-card"><div class="number">🔍</div><h3>01. Discover</h3><p>Browse sample internship listings and filter by role, field and work mode.</p></div>
+        <div class="how-card"><div class="number">📝</div><h3>02. Apply</h3><p>Choose an opportunity and submit your details through the application form.</p></div>
+        <div class="how-card"><div class="number">🚀</div><h3>03. Take a step</h3><p>Build confidence by exploring opportunities that match your interests.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <div class="cta">
+        <div><h2>Ready to start your journey?</h2><p>Explore the listings and apply for a sample opportunity.</p></div>
+        <button class="btn" style="background:white;color:#3730a3" onclick="document.getElementById('internships').scrollIntoView({behavior:'smooth'})">Browse opportunities →</button>
+      </div>
+      <p class="notice" style="margin-top:18px">Note: Listings on this demo are sample data, not verified live vacancies. Applying submits your information to the competition's configured Formspree form.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-row">
+    <strong class="logo">internly.</strong>
+    <span>Find opportunities. Build your future.</span>
+    <span>© <span id="year"></span> Internly Demo</span>
+  </div>
+</footer>
+
+<dialog id="applyDialog">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <div><span class="eyebrow">Application form</span><h2 id="applyTitle" style="font-size:24px;margin-top:7px">Apply for internship</h2></div>
+      <button type="button" class="close-btn" id="closeDialog" aria-label="Close application form">✕</button>
+    </div>
+    <form id="applicationForm" action="https://formspree.io/f/xqpeweal" method="POST">
+      <input type="hidden" name="_subject" value="New Internship Application - Internly">
+      <input type="hidden" name="internship_role" id="roleField">
+      <div class="form-fields">
+        <label>Full name
+          <input name="name" required minlength="2" autocomplete="name" placeholder="Enter your full name">
+        </label>
+        <label>Email address
+          <input type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+        </label>
+        <label>Phone number
+          <input type="tel" name="phone" required pattern="[0-9+() -]{8,18}" placeholder="Enter your phone number">
+        </label>
+        <label>Relevant skills
+          <input name="skills" required placeholder="e.g. HTML, communication, Excel">
+        </label>
+        <label>Why are you interested?
+          <textarea name="message" rows="3" required minlength="10" placeholder="Briefly tell us about your interest"></textarea>
+        </label>
+      </div>
+      <button class="btn" id="submitBtn" type="submit" style="width:100%">Submit application</button>
+      <p class="notice">Your information will be sent to the configured Formspree endpoint.</p>
+      <p id="formMessage" aria-live="polite"></p>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  // All opportunities below are fictional sample data for the demo.
+  const internships = [
+    {id:1, role:"Frontend Developer Intern", company:"PixelCraft Studio", icon:"💻", category:"Technology", mode:"Remote", duration:"3 months", stipend:"₹8,000/month", location:"Remote", tags:["HTML","CSS","JavaScript"]},
+    {id:2, role:"UI/UX Design Intern", company:"DesignNest", icon:"🎨", category:"Design", mode:"Hybrid", duration:"2 months", stipend:"₹7,000/month", location:"Mumbai", tags:["Figma","Prototyping"]},
+    {id:3, role:"Digital Marketing Intern", company:"GrowthSpark", icon:"📈", category:"Marketing", mode:"Remote", duration:"3 months", stipend:"₹6,000/month", location:"Remote", tags:["SEO","Social Media"]},
+    {id:4, role:"Data Analyst Intern", company:"InsightWorks", icon:"📊", category:"Technology", mode:"On-site", duration:"6 months", stipend:"₹12,000/month", location:"Pune", tags:["Excel","SQL"]},
+    {id:5, role:"Content Writing Intern", company:"WordWave Media", icon:"✍️", category:"Content", mode:"Remote", duration:"2 months", stipend:"₹5,000/month", location:"Remote", tags:["Writing","Research"]},
+    {id:6, role:"Finance Intern", company:"LedgerPoint", icon:"💰", category:"Finance", mode:"Hybrid", duration:"3 months", stipend:"₹9,000/month", location:"Mumbai", tags:["Excel","Accounting"]},
+    {id:7, role:"Business Development Intern", company:"LaunchBridge", icon:"🤝", category:"Business", mode:"On-site", duration:"3 months", stipend:"₹8,000/month", location:"Thane", tags:["Communication","Sales"]},
+    {id:8, role:"React Developer Intern", company:"CodeHarbor", icon:"⚛️", category:"Technology", mode:"Remote", duration:"4 months", stipend:"₹10,000/month", location:"Remote", tags:["React","JavaScript"]},
+    {id:9, role:"Graphic Design Intern", company:"Canvas & Co.", icon:"🖌️", category:"Design", mode:"Hybrid", duration:"2 months", stipend:"₹6,000/month", location:"Navi Mumbai", tags:["Photoshop","Branding"]},
+    {id:10, role:"Social Media Intern", company:"BuzzBerry", icon:"📱", category:"Marketing", mode:"On-site", duration:"3 months", stipend:"₹7,000/month", location:"Mumbai", tags:["Instagram","Content"]},
+    {id:11, role:"Research Intern", company:"FutureLab", icon:"🔬", category:"Business", mode:"Remote", duration:"3 months", stipend:"₹6,000/month", location:"Remote", tags:["Research","Analysis"]},
+    {id:12, role:"Technical Content Intern", company:"TechTonic", icon:"📝", category:"Content", mode:"Hybrid", duration:"3 months", stipend:"₹8,000/month", location:"Pune", tags:["Writing","Technology"]}
+  ];
+
+  const jobsElement = document.getElementById("jobs");
+  const searchInput = document.getElementById("search");
+  const categorySelect = document.getElementById("category");
+  const modeSelect = document.getElementById("mode");
+  const resultCount = document.getElementById("resultCount");
+  const dialog = document.getElementById("applyDialog");
+  const applicationForm = document.getElementById("applicationForm");
+  let selectedInternship = null;
+  let isSubmitting = false;
+
+  function renderJobs() {
+    const query = searchInput.value.trim().toLowerCase();
+    const category = categorySelect.value;
+    const mode = modeSelect.value;
+
+    const filtered = internships.filter(job => {
+      const searchable = [job.role, job.company, job.category, job.location, ...job.tags].join(" ").toLowerCase();
+      return searchable.includes(query) &&
+        (!category || job.category === category) &&
+        (!mode || job.mode === mode);
+    });
+
+    resultCount.textContent = `Showing ${filtered.length} of ${internships.length} sample internships`;
+
+    if (!filtered.length) {
+      jobsElement.innerHTML = '<div class="empty"><h3>No internships found</h3><p>Try another keyword or reset your filters.</p><button class="btn" onclick="resetFilters()">Reset filters</button></div>';
+      return;
+    }
+
+    jobsElement.innerHTML = filtered.map(job => `
+      <article class="job-card">
+        <div class="company-row">
+          <div class="company-logo">${job.icon}</div>
+          <div><h3>${escapeHTML(job.company)}</h3><p>${escapeHTML(job.category)} · Sample listing</p></div>
+        </div>
+        <span class="tag">${escapeHTML(job.mode)}</span>
+        <h3 class="job-title">${escapeHTML(job.role)}</h3>
+        <div class="details">
+          <span>📍 ${escapeHTML(job.location)}</span>
+          <span>🗓️ ${escapeHTML(job.duration)}</span>
+          <span>💼 ${escapeHTML(job.stipend)}</span>
+        </div>
+        <div>${job.tags.map(tag => `<span class="tag">${escapeHTML(tag)}</span>`).join("")}</div>
+        <div class="job-bottom">
+          <span class="stipend">${escapeHTML(job.stipend)}</span>
+          <button class="btn" onclick="openApplication(${job.id})">Apply now</button>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+    }[char]));
+  }
+
+  function resetFilters() {
+    searchInput.value = "";
+    categorySelect.value = "";
+    modeSelect.value = "";
+    renderJobs();
+  }
+
+  function openApplication(id) {
+    selectedInternship = internships.find(job => job.id === id);
+    if (!selectedInternship) return;
+    document.getElementById("applyTitle").textContent = "Apply: " + selectedInternship.role;
+    document.getElementById("roleField").value = selectedInternship.role + " at " + selectedInternship.company;
+    document.getElementById("formMessage").textContent = "";
+    document.getElementById("formMessage").className = "";
+    dialog.showModal();
+  }
+
+  document.getElementById("closeDialog").addEventListener("click", () => dialog.close());
+  dialog.addEventListener("click", event => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  searchInput.addEventListener("input", renderJobs);
+  categorySelect.addEventListener("change", renderJobs);
+  modeSelect.addEventListener("change", renderJobs);
+  document.getElementById("clearFilters").addEventListener("click", resetFilters);
+
+  applicationForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (isSubmitting) return;
+
+    if (!applicationForm.reportValidity()) return;
+
+    const submitButton = document.getElementById("submitBtn");
+    const message = document.getElementById("formMessage");
+    isSubmitting = true;
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+    message.className = "";
+    message.textContent = "Sending your application...";
+
+    try {
+      const response = await fetch(applicationForm.action, {
+        method: "POST",
+        body: new FormData(applicationForm),
+        headers: { "Accept": "application/json" }
+      });
+
+      if (!response.ok) {
+        let detail = "";
+        try {
+          const data = await response.json();
+          detail = data.errors?.map(error => error.message).join(" ");
+        } catch (_) {}
+        throw new Error(detail || "The application could not be sent. Please try again.");
+      }
+
+      message.textContent = "Application submitted successfully! Your details were sent.";
+      message.className = "success";
+      applicationForm.reset();
+      setTimeout(() => {
+        if (dialog.open) dialog.close();
+      }, 1800);
+    } catch (error) {
+      message.textContent = error.message || "Network error. Please check your connection and try again.";
+      message.className = "error";
+    } finally {
+      isSubmitting = false;
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit application";
+    }
+  });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+  document.getElementById("statJobs").textContent = internships.length;
+  renderJobs();
+</script>
+</body>
+</html>
